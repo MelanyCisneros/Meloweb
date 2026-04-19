@@ -1,0 +1,75 @@
+---
+import "../styles/global.css";
+import Nav from "../components/Nav.astro";
+import SocialRail from "../components/SocialRail.astro";
+import Footer from "../components/Footer.astro";
+import TweaksPanel from "../components/TweaksPanel.astro";
+
+interface Props {
+  title?: string;
+}
+
+const { title = "MELO — producer · engineer · bassist" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{title}</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700;1,800;1,900&family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+    rel="stylesheet"
+  />
+  <script is:inline>
+    (function () {
+      var saved = null;
+      try { saved = localStorage.getItem("lang"); } catch (e) {}
+      var initialLang = "en";
+      if (saved === "en" || saved === "es") {
+        initialLang = saved;
+      } else {
+        var nav = (navigator.language || navigator.userLanguage || "en").toLowerCase();
+        if (nav.indexOf("es") === 0) initialLang = "es";
+      }
+      window.TWEAKS = {
+        bgTone: "cocoa",
+        accentHue: 32,
+        wordmarkItalic: true,
+        wordmarkWeight: 700,
+        grainOn: true,
+        textureMode: "layered",
+        textureIntensity: 55,
+        lang: initialLang,
+      };
+    })();
+    (function () {
+      var h = document.documentElement;
+      var T = window.TWEAKS;
+      h.setAttribute("data-bg", T.bgTone);
+      h.setAttribute("data-grain", T.grainOn ? "on" : "off");
+      h.setAttribute("data-lang", T.lang);
+      h.setAttribute("data-texture", T.textureMode);
+      h.style.setProperty("--accent-h", T.accentHue);
+      h.style.setProperty("--wm-italic", T.wordmarkItalic ? "italic" : "normal");
+      h.style.setProperty("--wm-weight", T.wordmarkWeight);
+      h.style.setProperty("--tex-i", (T.textureIntensity / 100).toFixed(3));
+    })();
+  </script>
+</head>
+<body>
+  <div class="cursor-glow" aria-hidden="true"></div>
+  <SocialRail />
+  <Nav />
+  <slot />
+  <Footer />
+  <TweaksPanel />
+  <script>
+    import "../scripts/app.ts";
+  </script>
+</body>
+</html>

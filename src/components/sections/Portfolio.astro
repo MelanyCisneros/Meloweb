@@ -1,0 +1,248 @@
+---
+type Embed =
+  | { provider: "youtube" | "vimeo" | "spotify" | "bandcamp"; id: string }
+  | { provider: "soundcloud"; id: string }
+  | { provider: "iframe"; url: string }
+  | null;
+
+type SourceKind = "drive" | "soundcloud" | "spotify" | "bandcamp" | "dropbox" | "wav" | "mp3" | "download" | "link";
+
+interface Source {
+  kind: SourceKind;
+  label: string;
+  url: string;
+}
+
+interface Work {
+  title: string;
+  artist: string;
+  role_en: string;
+  role_es: string;
+  desc_en: string;
+  desc_es: string;
+  year: string;
+  format: string;
+  tools: string;
+  embed: Embed;
+  sources?: Source[];
+}
+
+const works: Work[] = [
+  {
+    title: "Nardamelon",
+    artist: "Felipe Pumarada",
+    role_en: "Production & Engineering",
+    role_es: "Producción e Ingeniería",
+    desc_en:
+      "Arranged and produced a cover of the original song — coordinating musicians and leading rehearsals. Contributed to microphone and instrumentation decisions during recording, and completed comping and session prep in Pro Tools.",
+    desc_es:
+      "Arreglé y produje una versión de la canción original — coordinando a los músicos y dirigiendo los ensayos. Aporté en las decisiones de microfonía e instrumentación durante la grabación, y realicé el comping y la preparación de la sesión en Pro Tools.",
+    year: "2025",
+    format: "Single",
+    tools: "Pro Tools",
+    embed: { provider: "youtube", id: "fqcUQ73zdZM" },
+    sources: [],
+  },
+  {
+    title: "Proyecto 18",
+    artist: "Peyowtee",
+    role_en: "Production & Engineering",
+    role_es: "Producción e Ingeniería",
+    desc_en:
+      "Co-produced the track with my band — contributing to arrangement and instrumentation. Recorded bass and completed comping and editing for bass and drums, focused on timing and consistency between takes.",
+    desc_es:
+      "Co-produje el tema junto a mi banda — aportando en los arreglos y la instrumentación. Grabé el bajo y realicé el comping y la edición de bajo y batería, cuidando el timing y la consistencia entre tomas.",
+    year: "2024",
+    format: "EP track",
+    tools: "Pro Tools · Logic",
+    embed: { provider: "youtube", id: "Ux-8OHR9Td0" },
+    sources: [
+      { kind: "spotify", label: "Stream", url: "https://open.spotify.com/track/75k5pSNgk0XsGjbh5iETNy" },
+    ],
+  },
+  {
+    title: "Bobby Nobody",
+    artist: "Different Format",
+    role_en: "Mixing",
+    role_es: "Mezcla",
+    desc_en:
+      "Mixed from provided multitracks in Pro Tools — using EQ and compression to balance the track and shape the overall tone. Focused on clarity, separation, and a cohesive stereo image.",
+    desc_es:
+      "Mezclé el tema a partir de las multipistas en Pro Tools — usando EQ y compresión para balancear la canción y darle forma al tono general. Con foco en la claridad, la separación y una imagen estéreo coherente.",
+    year: "2025",
+    format: "Single",
+    tools: "Pro Tools",
+    embed: { provider: "youtube", id: "YvImXaaj5J4" },
+    sources: [],
+  },
+  {
+    title: "Departamento — Sound Alike",
+    artist: "Bandalos Chinos",
+    role_en: "Creative Production",
+    role_es: "Producción Creativa",
+    desc_en:
+      "Recreated the style as a sound-alike study — analyzing arrangement and production elements. Focused on sound selection, layering, and tonal balance to match the original aesthetic while maintaining clarity.",
+    desc_es:
+      "Recreación estilística a modo de estudio sound-alike — analizando los arreglos y los elementos de producción. Con foco en la selección de sonidos, el trabajo de capas y el balance tonal, para igualar la estética original sin perder claridad.",
+    year: "2024",
+    format: "Study",
+    tools: "Logic · Pro Tools",
+    embed: { provider: "youtube", id: "jrXC4AEc1gc" },
+    sources: [],
+  },
+];
+
+function buildWave(seed: number, n = 64): number[] {
+  const bars: number[] = [];
+  let s = seed;
+  for (let i = 0; i < n; i++) {
+    s = (s * 9301 + 49297) % 233280;
+    const r = s / 233280;
+    const env = 0.3 + 0.7 * Math.abs(Math.sin((i / n) * Math.PI * 2.5));
+    const h = Math.max(0.15, Math.min(1, (0.3 + r * 0.8) * env));
+    bars.push(h);
+  }
+  return bars;
+}
+
+function embedSrc(e: Embed): { src: string; provider: string } | null {
+  if (!e) return null;
+  if (e.provider === "youtube")
+    return { src: `https://www.youtube-nocookie.com/embed/${e.id}?rel=0&modestbranding=1`, provider: "youtube" };
+  if (e.provider === "vimeo")
+    return { src: `https://player.vimeo.com/video/${e.id}?title=0&byline=0&portrait=0`, provider: "vimeo" };
+  if (e.provider === "soundcloud")
+    return {
+      src: `https://w.soundcloud.com/player/?url=${encodeURIComponent(
+        "https://api.soundcloud.com/tracks/" + e.id
+      )}&color=%23c7b28b&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&visual=true`,
+      provider: "soundcloud",
+    };
+  if (e.provider === "spotify")
+    return { src: `https://open.spotify.com/embed/${e.id}?theme=0`, provider: "spotify" };
+  if (e.provider === "bandcamp")
+    return {
+      src: `https://bandcamp.com/EmbeddedPlayer/${e.id}/size=large/bgcol=1c1510/linkcol=c7b28b/artwork=small/transparent=true/`,
+      provider: "bandcamp",
+    };
+  if (e.provider === "iframe") return { src: e.url, provider: "iframe" };
+  return null;
+}
+
+const sourceMeta: Record<SourceKind, { name: string }> = {
+  drive: { name: "Drive" },
+  soundcloud: { name: "SoundCloud" },
+  spotify: { name: "Spotify" },
+  bandcamp: { name: "Bandcamp" },
+  dropbox: { name: "Dropbox" },
+  wav: { name: "WAV" },
+  mp3: { name: "MP3" },
+  download: { name: "Download" },
+  link: { name: "Link" },
+};
+---
+
+<section id="portfolio" data-screen-label="04 Portfolio">
+  <div class="container">
+    <div class="section-head">
+      <h2 data-en>Portfolio</h2>
+      <h2 data-es>Proyectos</h2>
+      <div class="meta">selected works · 2023—2026</div>
+    </div>
+
+    <div class="works" id="works">
+      {
+        works.map((w, i) => {
+          const reverse = i % 2 === 1;
+          const bars = buildWave((i + 1) * 137);
+          const emb = embedSrc(w.embed);
+          return (
+            <div class={`work${reverse ? " reverse" : ""}`}>
+              <div class="work-media">
+                <div class="player">
+                  {emb ? (
+                    <div class="player-media embed" data-provider={emb.provider}>
+                      <iframe
+                        src={emb.src}
+                        title={`${w.title} — ${w.artist}`}
+                        loading="lazy"
+                        allowfullscreen
+                        allow="autoplay; encrypted-media; clipboard-write"
+                        frameborder="0"
+                        style="width:100%;height:100%;border:0;background:#000"
+                      />
+                    </div>
+                  ) : (
+                    <>
+                      <div class="player-media">
+                        <div class="placeholder"><span class="ph-label">artwork — {w.title}</span></div>
+                        <div class="player-play" data-play={i}>
+                          <div class="play-btn" data-btn={i}>
+                            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="player-bar">
+                        <span class="time" data-time-cur={i}>0:00</span>
+                        <div class="wave" data-wave={i}>
+                          {bars.map((h, j) => (
+                            <span style={`height:${Math.round(h * 100)}%`} data-bar={j} />
+                          ))}
+                        </div>
+                        <span class="time">3:24</span>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+              <div class="work-text">
+                <div class="idx">0{i + 1} / 0{works.length}</div>
+                <h3>
+                  {w.title} <span style="color:var(--ink-dim);font-weight:400">— {w.artist}</span>
+                </h3>
+                <div class="role" data-en>{w.role_en}</div>
+                <div class="role" data-es>{w.role_es}</div>
+                <p data-en>{w.desc_en}</p>
+                <p data-es>{w.desc_es}</p>
+                <div class="work-meta">
+                  <span><b>Year</b> · {w.year}</span>
+                  <span><b>Format</b> · {w.format}</span>
+                  <span><b>Tools</b> · {w.tools}</span>
+                  {w.embed && (
+                    <span style="color:var(--accent)"><b>Listen</b> · {w.embed.provider}</span>
+                  )}
+                </div>
+                {w.sources && w.sources.length > 0 && (
+                  <div class="work-sources" aria-label="Alternative sources">
+                    <span class="work-sources-label">
+                      <span data-en>Listen / download in high quality</span>
+                      <span data-es>Escucha y descarga en alta fidelidad</span>
+                    </span>
+                    <div class="work-sources-list">
+                      {w.sources.map((s) => (
+                        <a
+                          class="source-chip"
+                          href={s.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          data-source={s.kind}
+                        >
+                          <span class="source-chip-name">{sourceMeta[s.kind].name}</span>
+                          <span class="source-chip-sep">·</span>
+                          <span class="source-chip-label">{s.label}</span>
+                          <svg class="source-chip-ext" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M14 3h7v7M10 14L21 3M21 14v7H3V3h7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })
+      }
+    </div>
+  </div>
+</section>

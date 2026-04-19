@@ -1,0 +1,35 @@
+---
+import { Image } from "astro:assets";
+import studioPhoto from "../../assets/images/melo-bg-hero-tall.jpg";
+---
+<section id="contact" data-screen-label="06 Contact">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-media">
+        <Image
+          src={studioPhoto}
+          alt="Melo portrait"
+          widths={[480, 768, 1024, 1280]}
+          sizes="(max-width: 820px) 100vw, 40vw"
+          quality={80}
+          format="webp"
+          loading="lazy"
+        />
+      </div>
+      <div>
+        <div class="eyebrow" style="margin-bottom: 20px;" data-en>Get in touch</div>
+        <div class="eyebrow" style="margin-bottom: 20px;" data-es>Hablemos</div>
+        <h2 class="contact-head" data-en>Let's bring<br />your ideas<br /><em>to life.</em></h2>
+        <h2 class="contact-head" data-es>Démosle<br />vida<br /><em>a tus ideas.</em></h2>
+        <p class="contact-body" data-en>Available for production, recording, and bass sessions — in studio or remotely. Reach out to talk about your project.</p>
+        <p class="contact-body" data-es>Disponible para sesiones de producción, grabación y bajo — presencial o remoto. Escríbeme y hablemos de tu proyecto.</p>
+        <a href="mailto:itsmelo.music@gmail.com" class="email-pill">
+          itsmelo.music@gmail.com
+          <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M13 5l7 7-7 7" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,49 @@
+---
+import { getImage } from "astro:assets";
+import heroBg from "../../assets/images/melo-bg-hero.jpg";
+import heroBgTall from "../../assets/images/melo-bg-hero-tall.jpg";
+
+const wide = await getImage({
+  src: heroBg,
+  widths: [768, 1280, 1920, 2560],
+  format: "webp",
+  quality: 78,
+});
+const tall = await getImage({
+  src: heroBgTall,
+  widths: [480, 768, 1024, 1440],
+  format: "webp",
+  quality: 80,
+});
+---
+<section id="hero" data-screen-label="01 Hero">
+  <div class="hero-media">
+    <picture>
+      <source
+        media="(max-width: 820px)"
+        srcset={tall.srcSet.attribute}
+        sizes="100vw"
+      />
+      <img
+        src={wide.src}
+        srcset={wide.srcSet.attribute}
+        sizes="100vw"
+        alt=""
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+    </picture>
+  </div>
+  <div class="hero-inner">
+    <h1 class="wordmark">Melo</h1>
+    <div class="hero-tag">
+      <span data-en>Producer <span class="dot">·</span> Engineer <span class="dot">·</span> Bassist</span>
+      <span data-es>Productora <span class="dot">·</span> Engineer <span class="dot">·</span> Bajista</span>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <span data-en>scroll</span><span data-es>desplaza</span>
+    <span>↓</span>
+  </div>
+</section>

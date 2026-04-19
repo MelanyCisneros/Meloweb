@@ -1,0 +1,51 @@
+---
+---
+<div class="tweaks" id="tweaks">
+  <h4>Tweaks</h4>
+
+  <div class="row">
+    <label>Background tone</label>
+    <div class="swatches" id="bg-swatches">
+      <div class="sw" data-bg="espresso" style="background:#1c1510" title="Espresso"></div>
+      <div class="sw" data-bg="cocoa" style="background:#231810" title="Cocoa"></div>
+      <div class="sw" data-bg="walnut" style="background:#1a110a" title="Walnut"></div>
+      <div class="sw" data-bg="ink" style="background:#0f0d0c" title="Ink"></div>
+    </div>
+  </div>
+
+  <div class="row">
+    <label>Accent hue <span id="hue-val" style="color:var(--ink-soft)"></span></label>
+    <input type="range" id="hue-slider" min="0" max="360" step="1" />
+  </div>
+
+  <div class="toggle-row">
+    <label style="margin:0">Italic wordmark</label>
+    <div class="toggle" id="italic-toggle"></div>
+  </div>
+
+  <div class="row">
+    <label>Wordmark weight</label>
+    <input type="range" id="weight-slider" min="400" max="900" step="100" />
+  </div>
+
+  <div class="toggle-row">
+    <label style="margin:0">Film grain</label>
+    <div class="toggle" id="grain-toggle"></div>
+  </div>
+
+  <div class="row">
+    <label>Texture mode</label>
+    <div class="swatches" id="tex-modes" style="gap:4px">
+      <button class="sw" data-tex="layered" style="width:auto;height:26px;padding:0 8px;font-family:var(--font-mono);font-size:10px;color:var(--ink);background:rgba(0,0,0,.3)">Layered</button>
+      <button class="sw" data-tex="grain" style="width:auto;height:26px;padding:0 8px;font-family:var(--font-mono);font-size:10px;color:var(--ink);background:rgba(0,0,0,.3)">Grain only</button>
+      <button class="sw" data-tex="off" style="width:auto;height:26px;padding:0 8px;font-family:var(--font-mono);font-size:10px;color:var(--ink);background:rgba(0,0,0,.3)">Off</button>
+    </div>
+  </div>
+
+  <div class="row">
+    <label>Texture intensity <span id="tex-val" style="color:var(--ink-soft)"></span></label>
+    <input type="range" id="tex-slider" min="0" max="100" step="5" />
+  </div>
+
+  <div class="hint">Tip: tweaks persist on save.</div>
+</div>
