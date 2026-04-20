@@ -1,8 +1,16 @@
 ---
 type Embed =
   | { provider: "youtube" | "vimeo" | "spotify" | "bandcamp"; id: string }
-  | { provider: "soundcloud"; id: string }
+  | { provider: "soundcloud"; url: string }
   | { provider: "iframe"; url: string }
+  | {
+      provider: "private";
+      url: string;
+      note_en?: string;
+      note_es?: string;
+      cta_en?: string;
+      cta_es?: string;
+    }
   | null;
 
 type SourceKind = "drive" | "soundcloud" | "spotify" | "bandcamp" | "dropbox" | "wav" | "mp3" | "download" | "link";
@@ -37,10 +45,10 @@ const works: Work[] = [
       "Arranged and produced a cover of the original song — coordinating musicians and leading rehearsals. Contributed to microphone and instrumentation decisions during recording, and completed comping and session prep in Pro Tools.",
     desc_es:
       "Arreglé y produje una versión de la canción original — coordinando a los músicos y dirigiendo los ensayos. Aporté en las decisiones de microfonía e instrumentación durante la grabación, y realicé el comping y la preparación de la sesión en Pro Tools.",
-    year: "2025",
-    format: "Single",
+    year: "2024",
+    format: "Cover (Arrangement)",
     tools: "Pro Tools",
-    embed: { provider: "youtube", id: "fqcUQ73zdZM" },
+    embed: { provider: "soundcloud", url: "https://soundcloud.com/melo-299283697/nardamelon_melo_sessionprep" },
     sources: [],
   },
   {
@@ -53,8 +61,8 @@ const works: Work[] = [
     desc_es:
       "Co-produje el tema junto a mi banda — aportando en los arreglos y la instrumentación. Grabé el bajo y realicé el comping y la edición de bajo y batería, cuidando el timing y la consistencia entre tomas.",
     year: "2024",
-    format: "EP track",
-    tools: "Pro Tools · Logic",
+    format: "Single",
+    tools: "Pro Tools",
     embed: { provider: "youtube", id: "Ux-8OHR9Td0" },
     sources: [
       { kind: "spotify", label: "Stream", url: "https://open.spotify.com/track/75k5pSNgk0XsGjbh5iETNy" },
@@ -69,10 +77,10 @@ const works: Work[] = [
       "Mixed from provided multitracks in Pro Tools — using EQ and compression to balance the track and shape the overall tone. Focused on clarity, separation, and a cohesive stereo image.",
     desc_es:
       "Mezclé el tema a partir de las multipistas en Pro Tools — usando EQ y compresión para balancear la canción y darle forma al tono general. Con foco en la claridad, la separación y una imagen estéreo coherente.",
-    year: "2025",
-    format: "Single",
+    year: "2023",
+    format: "Mix (Class Project)",
     tools: "Pro Tools",
-    embed: { provider: "youtube", id: "YvImXaaj5J4" },
+    embed: { provider: "soundcloud", url: "https://soundcloud.com/melo-299283697/bobby-nobody-different-1" },
     sources: [],
   },
   {
@@ -84,10 +92,17 @@ const works: Work[] = [
       "Recreated the style as a sound-alike study — analyzing arrangement and production elements. Focused on sound selection, layering, and tonal balance to match the original aesthetic while maintaining clarity.",
     desc_es:
       "Recreación estilística a modo de estudio sound-alike — analizando los arreglos y los elementos de producción. Con foco en la selección de sonidos, el trabajo de capas y el balance tonal, para igualar la estética original sin perder claridad.",
-    year: "2024",
-    format: "Study",
-    tools: "Logic · Pro Tools",
-    embed: { provider: "youtube", id: "jrXC4AEc1gc" },
+    year: "2026",
+    format: "Academic Project",
+    tools: "Logic Pro / Pro Tools",
+    embed: {
+      provider: "private",
+      url: "https://drive.google.com/drive/folders/14t92YkpKfDlAgkzhGneqv0p2c7NUJoAR?usp=share_link",
+      note_en: "Sound-alike study · audio available on request",
+      note_es: "Estudio sound-alike · audio disponible bajo solicitud",
+      cta_en: "Open Drive folder",
+      cta_es: "Abrir carpeta de Drive",
+    },
     sources: [],
   },
 ];
@@ -114,7 +129,7 @@ function embedSrc(e: Embed): { src: string; provider: string } | null {
   if (e.provider === "soundcloud")
     return {
       src: `https://w.soundcloud.com/player/?url=${encodeURIComponent(
-        "https://api.soundcloud.com/tracks/" + e.id
+        e.url
       )}&color=%23c7b28b&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&visual=true`,
       provider: "soundcloud",
     };
@@ -126,6 +141,7 @@ function embedSrc(e: Embed): { src: string; provider: string } | null {
       provider: "bandcamp",
     };
   if (e.provider === "iframe") return { src: e.url, provider: "iframe" };
+  if (e.provider === "private") return null;
   return null;
 }
 
@@ -172,6 +188,36 @@ const sourceMeta: Record<SourceKind, { name: string }> = {
                         style="width:100%;height:100%;border:0;background:#000"
                       />
                     </div>
+                  ) : w.embed?.provider === "private" ? (
+                    <div class="player-media private" data-provider="private">
+                      <div class="private-wave" aria-hidden="true">
+                        {bars.map((h) => (
+                          <span style={`height:${Math.round(h * 100)}%`} />
+                        ))}
+                      </div>
+                      <div class="private-content">
+                        <div class="private-icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="4" y="10" width="16" height="10" rx="2"/>
+                            <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+                          </svg>
+                        </div>
+                        <div class="private-note">
+                          <span data-en>{w.embed.note_en || "Available on request"}</span>
+                          <span data-es>{w.embed.note_es || "Disponible bajo solicitud"}</span>
+                        </div>
+                        <a class="private-cta" href={w.embed.url} target="_blank" rel="noopener noreferrer">
+                          <svg class="private-cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M3 7h6l2 3h10v9H3z"/>
+                          </svg>
+                          <span data-en>{w.embed.cta_en || "Open Drive"}</span>
+                          <span data-es>{w.embed.cta_es || "Abrir Drive"}</span>
+                          <svg class="private-cta-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M14 3h7v7M10 14L21 3M21 14v7H3V3h7"/>
+                          </svg>
+                        </a>
+                      </div>
+                    </div>
                   ) : (
                     <>
                       <div class="player-media">
@@ -197,9 +243,7 @@ const sourceMeta: Record<SourceKind, { name: string }> = {
               </div>
               <div class="work-text">
                 <div class="idx">0{i + 1} / 0{works.length}</div>
-                <h3>
-                  {w.title} <span style="color:var(--ink-dim);font-weight:400">— {w.artist}</span>
-                </h3>
+                <h3>{w.title} — {w.artist}</h3>
                 <div class="role" data-en>{w.role_en}</div>
                 <div class="role" data-es>{w.role_es}</div>
                 <p data-en>{w.desc_en}</p>
@@ -208,7 +252,7 @@ const sourceMeta: Record<SourceKind, { name: string }> = {
                   <span><b>Year</b> · {w.year}</span>
                   <span><b>Format</b> · {w.format}</span>
                   <span><b>Tools</b> · {w.tools}</span>
-                  {w.embed && (
+                  {w.embed && w.embed.provider !== "private" && (
                     <span style="color:var(--accent)"><b>Listen</b> · {w.embed.provider}</span>
                   )}
                 </div>

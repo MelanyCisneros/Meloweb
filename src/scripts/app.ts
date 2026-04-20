@@ -139,74 +139,6 @@ window.addEventListener("load", () => {
   }
 });
 
-// ---- Custom cursor ----
-(function initCursor() {
-  if (matchMedia("(hover: none)").matches) return;
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  const glow = document.createElement("div");
-  glow.className = "cursor-glow";
-  const dot = document.createElement("div");
-  dot.className = "cursor-dot";
-  document.body.append(glow, dot);
-  let mx = innerWidth / 2,
-    my = innerHeight / 2;
-  let gx = mx,
-    gy = my,
-    dx = mx,
-    dy = my;
-  let lastSpark = 0,
-    lastX = mx,
-    lastY = my;
-  addEventListener(
-    "mousemove",
-    (e) => {
-      mx = e.clientX;
-      my = e.clientY;
-      document.body.classList.add("cursor-ready");
-      const now = performance.now();
-      const dist = Math.hypot(mx - lastX, my - lastY);
-      if (dist > 14 && now - lastSpark > 38) {
-        lastSpark = now;
-        lastX = mx;
-        lastY = my;
-        const s = document.createElement("div");
-        s.className = "cursor-trail";
-        s.style.left = mx + "px";
-        s.style.top = my + "px";
-        const jitter = (Math.random() - 0.5) * 10;
-        s.style.transform = `translate3d(calc(-50% + ${jitter}px), calc(-50% + ${jitter}px), 0)`;
-        document.body.appendChild(s);
-        setTimeout(() => s.remove(), 900);
-      }
-    },
-    { passive: true }
-  );
-  addEventListener("mousedown", () => document.body.classList.add("cursor-press"));
-  addEventListener("mouseup", () => document.body.classList.remove("cursor-press"));
-  addEventListener("mouseleave", () => document.body.classList.remove("cursor-ready"));
-  addEventListener("mouseenter", () => document.body.classList.add("cursor-ready"));
-  const hoverSel =
-    'a, button, .play-btn, .pill, .service, .work, .social, .lang-toggle button, input, textarea, [role="button"]';
-  document.addEventListener("mouseover", (e) => {
-    const tgt = e.target as HTMLElement | null;
-    if (tgt?.closest?.(hoverSel)) document.body.classList.add("cursor-hover");
-  });
-  document.addEventListener("mouseout", (e) => {
-    const tgt = e.target as HTMLElement | null;
-    if (tgt?.closest?.(hoverSel)) document.body.classList.remove("cursor-hover");
-  });
-  function raf() {
-    gx += (mx - gx) * 0.12;
-    gy += (my - gy) * 0.12;
-    dx += (mx - dx) * 0.35;
-    dy += (my - dy) * 0.35;
-    glow.style.transform = `translate3d(${gx}px, ${gy}px, 0) translate(-50%, -50%)`;
-    dot.style.transform = `translate3d(${dx}px, ${dy}px, 0) translate(-50%, -50%)`;
-    requestAnimationFrame(raf);
-  }
-  raf();
-})();
-
 // ---- Scroll reveal ----
 const revealTargets: Element[] = [];
 function markReveal(el: Element, delayIdx = 0) {
@@ -272,31 +204,6 @@ function updateReveal() {
   window.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener("resize", onScroll);
   updateReveal();
-}
-
-// ---- Cursor glow ----
-if (window.matchMedia("(hover: hover)").matches) {
-  const rootEl = document.documentElement;
-  const body = document.body;
-  let tx = 0, ty = 0, cx = 0, cy = 0, raf = 0;
-  function tick() {
-    cx += (tx - cx) * 0.18;
-    cy += (ty - cy) * 0.18;
-    rootEl.style.setProperty("--cx", cx.toFixed(1) + "px");
-    rootEl.style.setProperty("--cy", cy.toFixed(1) + "px");
-    if (Math.abs(tx - cx) > 0.3 || Math.abs(ty - cy) > 0.3) {
-      raf = requestAnimationFrame(tick);
-    } else {
-      raf = 0;
-    }
-  }
-  window.addEventListener("mousemove", (e) => {
-    tx = e.clientX;
-    ty = e.clientY;
-    if (!body.classList.contains("cursor-active")) body.classList.add("cursor-active");
-    if (!raf) raf = requestAnimationFrame(tick);
-  }, { passive: true });
-  document.addEventListener("mouseleave", () => body.classList.remove("cursor-active"));
 }
 
 // ---- Fake audio players ----
