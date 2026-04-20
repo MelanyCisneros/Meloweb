@@ -678,14 +678,16 @@ section:first-of-type { border-top: 0; }
 }
 .work-meta {
   display: flex; gap: 20px; flex-wrap: wrap;
+  justify-content: center;
   font-family: var(--font-mono); font-size: 12px;
   color: var(--ink-dim);
   padding-top: 16px;
   border-top: 1px solid var(--line);
+  text-align: center;
 }
 .work-meta b { color: var(--ink); font-weight: 400; }
 
-.work-sources { margin-top: 14px; }
+.work-sources { margin-top: 14px; text-align: center; }
 .work-sources-label {
   display: block;
   font-family: var(--font-mono);
@@ -694,8 +696,9 @@ section:first-of-type { border-top: 0; }
   text-transform: uppercase;
   color: var(--ink-dim);
   margin-bottom: 8px;
+  text-align: center;
 }
-.work-sources-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.work-sources-list { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
 .source-chip {
   display: inline-flex;
   align-items: center;
@@ -965,6 +968,7 @@ section:first-of-type { border-top: 0; }
   object-fit: cover;
   display: block;
 }
+.contact-text { text-align: center; }
 .contact-head {
   font-family: var(--font-display);
   font-weight: 800;
